@@ -98,9 +98,6 @@ class Database:
     def run_query(self, query):
         '''
         Executes SQL query
-
-        params:
-        - query: str
         '''
         try:
             if not query or not isinstance(query, str):

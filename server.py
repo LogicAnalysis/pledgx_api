@@ -1,7 +1,5 @@
 import os
-import pymysql
 
-#from flask import abort, Flask, jsonify, redirect, request, url_for
 from flask import abort, Flask, jsonify
 from flask_cors import CORS
 from http import HTTPStatus
