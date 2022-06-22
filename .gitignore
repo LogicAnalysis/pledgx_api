@@ -1,3 +1,9 @@
+# Mac Finder Files
+DS_Store
+
+# This is left in the git repo for test purposes, but would otherwise not be tracked
+#secrets.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -62,6 +68,7 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
+*.pyc
 instance/
 .webassets-cache
 
