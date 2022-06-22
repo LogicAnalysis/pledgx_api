@@ -87,15 +87,7 @@ class Database:
         except Exception as e:
             raise Exception(f'DB_EXCEPTION. Error: {e}')
 
-    @property
-    def db_connection_status(self):
-        '''
-        Returns the DB connection status
-        '''
-        return True if self.__connection is not None else False
-
-
-    def run_query(self, query):
+    def __run_query(self, query):
         '''
         Executes SQL query
         '''
@@ -109,10 +101,20 @@ class Database:
             with self.__connection.cursor() as cursor:
                 cursor.execute(query)
                 if 'SELECT' in query.upper():
-                    result = cursor.fetchall()
+                    entries = cursor.fetchall()
+                    table_columns = [col[0] for col in cursor.description]
+                    if entries and (len(entries) == 1) and (len(table_columns) == len(entries[0])):
+                        table_columns = [col[0] for col in cursor.description]
+                        entry = entries[0]
+                        result_dict = {}
+                        for index, value in enumerate(table_columns):
+                            result_dict[value] = entry[index]
+                        result = result_dict
+                    else:
+                        result = entries
                 else:
                     self.__connection.commit()
-                    result = f'{cursor.rowcount} row(s) affected.'
+                    result = cursor.lastrowid
                 cursor.close()
 
                 return result
@@ -120,3 +122,26 @@ class Database:
             raise pymysql.MySQLError(f'SQL_ERROR: {sql_error}')
         except Exception as e:
             raise Exception(f'SQL_QUERY_EXCEPTION: {e}')
+
+    @property
+    def db_connection_status(self):
+        '''
+        Returns the DB connection status
+        '''
+        return True if self.__connection is not None else False
+
+    def add_entry(self, entry_dict):
+        '''
+        Inserts a new entry into the SQL table
+        '''
+        dict_keys_string = ', '.join(list(entry_dict.keys()))
+        dict_values_string = ', '.join(f"'{key}'" for key in list(entry_dict.values()))
+        sql_query = f'INSERT INTO users (id, {dict_keys_string}) VALUES (NULL, {dict_values_string})'
+        return self.__run_query(sql_query)
+
+    def get_entry(self, entry_id):
+        '''
+        Retrieves an entry by ID
+        '''
+        sql_query = f'SELECT * from users WHERE id={entry_id} LIMIT 1'
+        return self.__run_query(sql_query)
