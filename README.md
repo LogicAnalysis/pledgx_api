@@ -1,4 +1,4 @@
-# pledgx
+# PledgX API
 
 This is the Flask + MySQL API component of the test assignment (part 2)
 
