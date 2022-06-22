@@ -81,6 +81,5 @@ class DevelopmentConfig(Config):
 
     # Environment
     DEBUG = MAIN_CONFIG['env']['development']['DEBUG']
-    print('DEBUG MODE', DEBUG)
     DEVELOPMENT = MAIN_CONFIG['env']['development']['DEVELOPMENT']
     ENV = MAIN_CONFIG['env']['development']['ENV']
