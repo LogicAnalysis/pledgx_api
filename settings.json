@@ -1,0 +1,24 @@
+{
+    "main": {
+        "common": {
+            "API_VERSION": "v1",
+            "HOST": "127.0.0.1",
+            "PORT": 8008
+        },
+        "env": {
+            "production": {
+                "CSRF_ENABLED": true,
+                "CSRF_SESSION_KEY": "",
+                "ENV": "production",
+                "DEBUG": false,
+                "DEVELOPMENT": false
+            },
+            "development": {
+                "CSRF_ENABLED": false,
+                "ENV": "development",
+                "DEBUG": true,
+                "DEVELOPMENT": true
+            }
+        }
+    }
+}
