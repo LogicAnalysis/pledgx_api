@@ -15,6 +15,6 @@ To install:
 4. Install requirements
 	* `pip install -r /pledgx_api/requirements.txt`
 5. Export Flask app
-	* `export FLASK_APP=flaskr`
+	* `export FLASK_APP=server`
 6. Run test server
 	* `flask run`
