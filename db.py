@@ -145,3 +145,17 @@ class Database:
 		'''
 		sql_query = f'SELECT * from users WHERE id={entry_id} LIMIT 1'
 		return self.__run_query(sql_query)
+	
+	def update_entry(self, entry_dict, entry_id):
+		'''
+		Updates an existing entry in the table
+		'''
+		#new_params_string = ', '.join([key + ' = ' + f"'{entry_dict[key]}'" for key in list(entry_dict.keys())]) # Does not handle None values properly
+		new_params_list = []
+		for key in list(entry_dict.keys()):
+			if entry_dict[key] is not None:
+				new_params_list.append(key + ' = ' + f"'{entry_dict[key]}'")
+			else:
+				new_params_list.append(f'{key} = NULL')
+		self.__run_query(f'UPDATE users SET {", ".join(new_params_list)} WHERE id = {entry_id}')
+		return entry_id
