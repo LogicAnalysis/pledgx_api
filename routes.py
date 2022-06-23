@@ -65,7 +65,7 @@ def construct_routes_blueprint(db):
 				db_user_id = db.add_entry(user_details)
 			else:
 				# Update existing user
-				db_user_id = db.run_query(f'SELECT * from users WHERE id={user_id}')
+				db_user_id = db.update_entry(entry_dict=user_details, entry_id=user_id)
 			response = build_response({'user_id': db_user_id}, HTTPStatus.OK)
 			return response
 		except pymysql.MySQLError as sqle:
