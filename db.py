@@ -103,20 +103,21 @@ class Database:
 				if 'SELECT' in query.upper():
 					entries = cursor.fetchall()
 					table_columns = [col[0] for col in cursor.description]
-					if entries and (len(entries) == 1) and (len(table_columns) == len(entries[0])):
+					if entries and (len(entries) > 0) and (len(table_columns) == len(entries[0])):
 						table_columns = [col[0] for col in cursor.description]
-						entry = entries[0]
-						result_dict = {}
-						for index, value in enumerate(table_columns):
-							result_dict[value] = entry[index]
-						result = result_dict
+						result_list = []
+						for entry in entries:
+							result_dict = {}
+							for index, table_column in enumerate(table_columns):
+								result_dict[table_column] = entry[index]
+							result_list.append(result_dict)
+						result = result_list
 					else:
 						result = entries
 				else:
 					self.__connection.commit()
 					result = cursor.lastrowid
 				cursor.close()
-
 				return result
 		except pymysql.MySQLError as sql_error:
 			raise pymysql.MySQLError(f'SQL_ERROR: {sql_error}')
@@ -144,6 +145,15 @@ class Database:
 		Retrieves an entry by ID
 		'''
 		sql_query = f'SELECT * from users WHERE id={entry_id} LIMIT 1'
+		result = self.__run_query(sql_query)
+		if result and len(result) > 0:
+			return result[0]
+	
+	def get_entries(self):
+		'''
+		Retrieves all entries in the table
+		'''
+		sql_query = f'SELECT * from users'
 		return self.__run_query(sql_query)
 	
 	def update_entry(self, entry_dict, entry_id):

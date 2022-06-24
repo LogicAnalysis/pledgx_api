@@ -5,11 +5,7 @@ import pymysql
 from db import Database
 
 def build_response(data, status_code):
-	message = {
-		'data': data if data else 'NO_DATA',
-		'status': status_code
-	}
-	response_msg = jsonify(message)
+	response_msg = jsonify(data)
 	response_msg.status_code = status_code
 	return response_msg
 
@@ -46,6 +42,18 @@ def construct_routes_blueprint(db):
 		except Exception as e:
 			abort(HTTPStatus.BAD_REQUEST, description=str(e))
 
+	# /api/v1/get_user_list
+	@routes_blueprint.route('/get_user_list', methods=['GET'])
+	def get_user_list():
+		users = None
+		try:
+			users = db.get_entries()
+			response = build_response({'users': users}, HTTPStatus.OK)
+			return response
+		except pymysql.MySQLError as sqle:
+			abort(HTTPStatus.INTERNAL_SERVER_ERROR, description=str(sqle))
+		except Exception as e:
+			abort(HTTPStatus.BAD_REQUEST, description=str(e))
 	# /
 	@routes_blueprint.route('/', methods=['GET'])
 	def main():
@@ -55,9 +63,10 @@ def construct_routes_blueprint(db):
 	@routes_blueprint.route('/update_user', methods=['POST'])
 	def update_user():
 		user_details = request.json.get('user_details')
-		user_id = request.json.get('user_id')
 		if not user_details:
 			abort(HTTPStatus.BAD_REQUEST, description='MISSING_USER_DETAILS')
+
+		user_id = user_details.get('id')
 
 		try:
 			if not user_id:
@@ -72,10 +81,5 @@ def construct_routes_blueprint(db):
 			abort(HTTPStatus.INTERNAL_SERVER_ERROR, description=str(sqle))
 		except Exception as e:
 			abort(HTTPStatus.BAD_REQUEST, description=str(e))
-
-
-		user_id = db.add_entry(request.form.get('user_details'))
-		response = build_response('SUCCESS', HTTPStatus.OK)
-		return response
 
 	return(routes_blueprint)

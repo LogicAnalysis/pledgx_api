@@ -1,8 +1,7 @@
 import os
 
-from flask import abort, Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
-from http import HTTPStatus
 
 from config import DevelopmentConfig as config_vars
 #from config import ProductionConfig as config_vars
@@ -17,9 +16,10 @@ route_prefix = f'/api/{api_version}'
 
 def create_app(test_config=None):
 	app = Flask(__name__, instance_relative_config=True)
+	#cors = CORS(app, resources={f'{route_prefix}/*': {'origins': '*'}})
+	CORS(app)
 	app.register_blueprint(construct_routes_blueprint(Database(config_vars)), url_prefix=f'/{route_prefix}')
 	app.register_blueprint(error_handler_blueprint)
-	cors = CORS(app, resources={f'{route_prefix}/*': {'origins': '*'}})
 	app.config.from_object(config_vars)
 	return app
 
